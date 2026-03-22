@@ -1483,6 +1483,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
+  - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1585,6 +1586,27 @@ MonoBehaviour:
   maxDis: 50
   wheelSpeed: 5
   target: {fileID: 1332378474}
+--- !u!114 &963194230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52f78e93835bdf04eb5ad39ac500b342, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  glowMaterial: {fileID: 2100000, guid: 384a7936c98fd0a4c8bb8f336aafe16f, type: 2}
+  glowReplaceShader: {fileID: 4800000, guid: 56b5f9500a7a8d0489da3a2cb3a3bce3, type: 3}
+  useAlphaChannelForGlow: 1
+  useSimpleGlow: 0
+  blurIterations: 4
+  blurSpread: 1
+  glowMultiplier: 1.2
+  glowColorMultiplier: {r: 1, g: 1, b: 1, a: 1}
+  postEffectsRenderTexture: {fileID: 0}
 --- !u!1 &966577288
 GameObject:
   m_ObjectHideFlags: 0
@@ -3149,7 +3171,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &3229254063598659232
