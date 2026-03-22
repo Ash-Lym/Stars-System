@@ -11,7 +11,12 @@ public class CameraCtrl : MonoBehaviour
     public float yMaxLimit = 80;
     public float xSpeed = 250.0f;
     public float ySpeed = 120.0f;
+    public float initDis = 20;
+    public float minDis = 3.0f;
+    public float maxDis = 50.0f;
+    public float wheelSpeed = 5;
     public Transform target;
+
     private float distance;
 
     private float x = 0.0f;
@@ -26,9 +31,7 @@ public class CameraCtrl : MonoBehaviour
     private void Start()
     {
         transform.rotation = Quaternion.Euler(y, x, 0);
-        transform.position = Quaternion.Euler(y, x, 0) * new Vector3(0, 0, -5) + target.position;
-        if (GetComponent<Rigidbody>())
-            GetComponent<Rigidbody>().freezeRotation = true;
+        transform.position = Quaternion.Euler(y, x, 0) * new Vector3(0, 0, initDis) + target.position;
     }
 
     // Update is called once per frame
@@ -46,6 +49,8 @@ public class CameraCtrl : MonoBehaviour
         finalx = Mathf.Lerp(finalx, x, Time.deltaTime * 2);
         finaly = Mathf.Lerp(finaly, y, Time.deltaTime * 2);
 
+        distance -= Input.GetAxis("Mouse ScrollWheel") * wheelSpeed;
+        distance = Mathf.Clamp(distance, minDis, maxDis);
         rotation = Quaternion.Euler(finaly, finalx, 0);
         position = rotation * new Vector3(0, 0, -distance) + target.position;
         transform.rotation = rotation;
@@ -60,4 +65,8 @@ public class CameraCtrl : MonoBehaviour
         return Mathf.Clamp(angle, min, max);
     }
 
+    public void SetTarget(Transform t)
+    {
+        target = t;
+    }
 }
