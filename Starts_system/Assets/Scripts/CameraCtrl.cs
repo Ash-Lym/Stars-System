@@ -35,7 +35,7 @@ public class CameraCtrl : MonoBehaviour
     void Update()
     {
         distance = Vector3.Distance(target.position, transform.position);
-        Debug.Log("update");
+
         if (Input.GetMouseButton(0))
         {
             x += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
