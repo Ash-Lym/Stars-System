@@ -1,28 +1,35 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CelestialBody : MonoBehaviour
 {
-    public float mass = 1f;// Mass of the celestial body
-    public Vector3 initialVelocity;//Initial velocity vector
+    // Mass parameter
+    public float mass = 1f;
+    // Initial velocity vector
+    public Vector3 initialVelocity;
 
-    [HideInInspector]
-    public Vector3 currentVelocity;//Current velocity vector
+    // Current velocity state
+    [HideInInspector] public Vector3 currentVelocity;
+    // Current acceleration state
+    [HideInInspector] public Vector3 currentAcceleration;
 
     void Awake()
     {
+        // Initial state assignment
         currentVelocity = initialVelocity;
     }
 
-    //Update velocity based on acceleration and time step
-    public void UpdateVelocity(Vector3 acceleration, float timeStep)
-    {
-        currentVelocity += acceleration * timeStep;
-    }
-
+    // Spatial position physics
     public void UpdatePosition(float timeStep)
     {
-        transform.position += currentVelocity * timeStep;
+        transform.position += currentVelocity * timeStep + 0.5f * currentAcceleration * timeStep * timeStep;
+    }
+
+    // Kinematic velocity physics
+    public void UpdateVelocity(Vector3 newAcceleration, float timeStep)
+    {
+        currentVelocity += (currentAcceleration + newAcceleration) * 0.5f * timeStep;
+
+        // Acceleration state cache
+        currentAcceleration = newAcceleration;
     }
 }

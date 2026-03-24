@@ -1,58 +1,94 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GravitySimulator : MonoBehaviour
 {
-    public float gravitationalConstant = 1f;//Gravitational constant G for simulation
-    public CelestialBody[] bodies;//Array of all celestial bodies in the scene
-    public float timeScale = 1f;//Simulation speed multiplier
-    public int physicsStepsPerFrame = 100;//Number of sub-steps per frame for stable calculation
+    // Gravitational constant parameter
+    public float gravitationalConstant = 39.4784f;
+    // Target celestial bodies
+    public CelestialBody[] bodies;
+    // Time scale multiplier
+    public float timeScale = 1f;
+
+    // Physics subdivision parameter
+    public int physicsStepsPerFrame = 20;
+
+    void Start()
+    {
+        // Initial system acceleration state
+        Vector3[] initialAccelerations = CalculateAccelerations();
+        for (int i = 0; i < bodies.Length; i++)
+        {
+            bodies[i].currentAcceleration = initialAccelerations[i];
+        }
+    }
 
     void FixedUpdate()
     {
-        //Skip calculation if simulation is paused
+        // Pause state condition
         if (timeScale == 0) return;
 
-        //Total time step for this frame (scaled by simulation speed)
+        // Delta time parameters
         float totalTimeStep = Time.fixedDeltaTime * timeScale;
         float subTimeStep = totalTimeStep / physicsStepsPerFrame;
 
-        //Subdivided physics calculation for stability
-        for (int i = 0; i < physicsStepsPerFrame; i++)
+        // Sub-step physics loop
+        for (int step = 0; step < physicsStepsPerFrame; step++)
         {
-            //Calculate gravitational acceleration for all bodies
-            foreach (CelestialBody body_a in bodies)
-            {
-                Vector3 acceleration = Vector3.zero;
-
-                foreach (CelestialBody body_b in bodies)
-                {
-                    if (body_a == body_b) continue;//Skip self-interaction
-
-                    Vector3 direction = body_b.transform.position - body_a.transform.position;
-                    float distanceSq = direction.sqrMagnitude;
-
-                    if (distanceSq == 0) continue;//Avoid division by zero
-
-                    //Add normalized direction for correct acceleration
-                    float forceMag = gravitationalConstant * body_b.mass / distanceSq;
-                    acceleration += direction.normalized * forceMag;
-                }
-
-                //Update velocity with calculated acceleration
-                body_a.UpdateVelocity(acceleration, subTimeStep);
-            }
-
-            //Update position of all bodies (after velocity update)
+            // Position state
             foreach (CelestialBody body in bodies)
             {
                 body.UpdatePosition(subTimeStep);
             }
+
+            // Acceleration state
+            Vector3[] newAccelerations = CalculateAccelerations();
+
+            // Velocity state
+            for (int i = 0; i < bodies.Length; i++)
+            {
+                bodies[i].UpdateVelocity(newAccelerations[i], subTimeStep);
+            }
         }
     }
 
-    // Set simulation speed (0 = pause, 1 = real time, >1 = faster)
+    // Gravitational acceleration mathematics
+    Vector3[] CalculateAccelerations()
+    {
+        // Acceleration array
+        Vector3[] accelerations = new Vector3[bodies.Length];
+
+        // N-body interaction logic
+        for (int i = 0; i < bodies.Length; i++)
+        {
+            CelestialBody body_a = bodies[i];
+            Vector3 acceleration = Vector3.zero;
+
+            for (int j = 0; j < bodies.Length; j++)
+            {
+                // Self-interaction exclusion
+                if (i == j) continue;
+
+                CelestialBody body_b = bodies[j];
+                // Distance vector
+                Vector3 direction = body_b.transform.position - body_a.transform.position;
+                // Squared magnitude
+                float distanceSq = direction.sqrMagnitude;
+
+                // Zero division exclusion
+                if (distanceSq == 0) continue;
+
+                // Force magnitude
+                float forceMag = gravitationalConstant * body_b.mass / distanceSq;
+                // Vector accumulation
+                acceleration += direction.normalized * forceMag;
+            }
+            accelerations[i] = acceleration;
+        }
+
+        return accelerations;
+    }
+
+    // Time scale modification
     public void SetTimeScale(float newTimeScale)
     {
         timeScale = newTimeScale;
